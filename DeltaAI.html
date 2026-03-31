@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DELTA AI | النظام الذكي المتكامل</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-purple: #bc13fe;
+            --dark-bg: #050505;
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* واجهة النيون الخلفية */
+        body::before {
+            content: '';
+            position: absolute;
+            top: -10%; left: -10%;
+            width: 40%; height: 40%;
+            background: var(--neon-blue);
+            filter: blur(150px);
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        header {
+            padding: 20px 5%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--neon-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue);
+            letter-spacing: 5px;
+        }
+
+        /* منطقة الدردشة الرئيسية */
+        #chatContainer {
+            flex: 1;
+            padding: 30px 10%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            scroll-behavior: smooth;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 15px 25px;
+            border-radius: 20px;
+            line-height: 1.6;
+            position: relative;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .user-msg {
+            align-self: flex-start;
+            background: var(--glass);
+            border-right: 3px solid var(--neon-purple);
+            border-radius: 0 20px 20px 20px;
+        }
+
+        .delta-msg {
+            align-self: flex-end;
+            background: rgba(0, 243, 255, 0.05);
+            border-left: 3px solid var(--neon-blue);
+            border-radius: 20px 0 20px 20px;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
+        }
+
+        /* شريط المدخلات */
+        .input-area {
+            padding: 20px 10%;
+            background: #0a0a0a;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        input {
+            flex: 1;
+            background: #111;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 30px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
+
+        .btn-action {
+            background: none;
+            border: none;
+            color: var(--neon-blue);
+            cursor: pointer;
+            font-size: 30px;
+            transition: 0.3s;
+        }
+
+        .btn-action:hover { transform: scale(1.2); text-shadow: 0 0 10px var(--neon-blue); }
+
+        /* الأنظمة الفرعية (التحليل / الصور) */
+        .status-bar {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            display: flex;
+            gap: 15px;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* تأثيرات التحميل */
+        .typing { display: none; color: var(--neon-blue); font-style: italic; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">DELTA</div>
+        <div id="connectionStatus" style="color: #00ff00; font-size: 12px;">
+            <span class="material-icons" style="font-size: 12px; vertical-align: middle;">sensors</span> متصل بالشبكة العالمية
+        </div>
+    </header>
+
+    <div id="chatContainer">
+        <div class="message delta-msg">
+            <b>النظام DELTA:</b>
+            مرحباً بك. تم تفعيل البروتوكولات الشاملة. أنا مستعد للتحليل، التوليد، أو الإجابة على تساؤلاتك. كيف يمكنني مساعدتك اليوم؟
+        </div>
+    </div>
+
+    <div style="padding: 0 10%;"><div id="typingIndicator" class="typing">DELTA يبحث في المصادر...</div></div>
+
+    <div class="input-area">
+        <button class="btn-action"><span class="material-icons">image</span></button>
+        <button class="btn-action"><span class="material-icons">analytics</span></button>
+        <input type="text" id="userInput" placeholder="اسأل DELTA عن أي شيء أو اطلب تحليلاً..." onkeypress="handleKey(event)">
+        <button class="btn-action" onclick="sendMessage()"><span class="material-icons">send</span></button>
+    </div>
+
+    <script>
+        const chatContainer = document.getElementById('chatContainer');
+        const userInput = document.getElementById('userInput');
+        const typingIndicator = document.getElementById('typingIndicator');
+
+        function handleKey(e) { if (e.key === 'Enter') sendMessage(); }
+
+        function sendMessage() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            // رسالة المستخدم
+            addMessage(text, 'user-msg', 'أنت');
+            userInput.value = '';
+
+            // محاكاة تفكير DELTA
+            showTyping(true);
+
+            setTimeout(() => {
+                showTyping(false);
+                processAI(text);
+            }, 1500);
+        }
+
+        function addMessage(text, className, sender) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${className}`;
+            msgDiv.innerHTML = `<b>${sender}:</b><br>${text}`;
+            chatContainer.appendChild(msgDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function showTyping(show) {
+            typingIndicator.style.display = show ? 'block' : 'none';
+        }
+
+        function processAI(query) {
+            let response = "";
+            
+            // منطق ذكاء بسيط (للعرض الأولي)
+            if (query.includes("صورة")) {
+                response = "جاري الاتصال بمحرك التوليد البصري... تم إنشاء تصور أولي لطلبك (في النسخة الكاملة سيظهر الرابط هنا).";
+            } else if (query.includes("تحليل") || query.includes("رقم")) {
+                response = "بناءً على البيانات المتاحة والمصادر التي قمت بفحصها الآن، تشير الأرقام إلى اتجاه تصاعدي بنسبة 15%. هل تريد تفصيلاً أعمق؟";
+            } else if (query.includes("نكتة")) {
+                response = "لماذا لا يثق العلماء بالذرات؟ لأنها تشكل كل شيء! (أتمنى أن تكون هذه 'البرمجة' المرحة قد أعجبتك).";
+            } else {
+                response = `لقد قمت بمراجعة عدة مصادر حول "${query}". الإجابة المختصرة هي أن هذا الموضوع يتطلب دقة عالية، وبناءً على ما وجدته، فإن القاعدة الأساسية هي... (DELTA جاهز للتوسع في الشرح).`;
+            }
+
+            addMessage(response, 'delta-msg', 'DELTA');
+            // تشغيل صوت بسيط عند الرد
+            const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-50.mp3');
+            audio.play().catch(() => {}); 
+        }
+    </script>
+</body>
+</html>

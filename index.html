@@ -3,136 +3,342 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DELTA AI | متصل بمحرك Google</title>
+    <title>DELTA AI | نظام المطور شريف داود</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        :root { --neon: #00f3ff; --google-blue: #4285F4; --bg: #050505; }
-        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; }
-        
-        .sidebar { width: 260px; background: #000; border-left: 1px solid var(--neon); padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .main { flex: 1; display: flex; flex-direction: column; background: radial-gradient(circle at center, #0a0a0a, #050505); }
-        
-        header { padding: 15px 30px; border-bottom: 1px solid #111; display: flex; justify-content: space-between; align-items: center; }
-        .status-online { color: #00ff00; font-size: 12px; display: flex; align-items: center; gap: 5px; }
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-purple: #bc13fe;
+            --dark-bg: #050505;
+            --google-blue: #4285F4;
+        }
 
-        #chatBox { flex: 1; padding: 20px 12%; overflow-y: auto; display: flex; flex-direction: column; gap: 25px; }
+        body {
+            background-color: var(--dark-bg);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-        /* صندوق التفكير والبحث */
-        .thought-container {
-            background: rgba(66, 133, 244, 0.05);
-            border: 1px solid rgba(66, 133, 244, 0.2);
+        /* القائمة الجانبية */
+        .sidebar {
+            width: 280px;
+            background: #000;
+            border-left: 1px solid var(--neon-blue);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 5px 0 15px rgba(0, 243, 255, 0.1);
+        }
+
+        .logo-area {
+            text-align: center;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #111;
+        }
+
+        .logo-text {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--neon-blue);
+            text-shadow: 0 0 15px var(--neon-blue);
+            letter-spacing: 5px;
+        }
+
+        .dev-card {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.03);
             border-radius: 12px;
             padding: 15px;
-            margin-bottom: 10px;
-            animation: slideIn 0.3s ease;
+            border: 1px solid #222;
         }
-        .search-step { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #aaa; margin-bottom: 8px; }
-        .loader-line { height: 2px; background: var(--google-blue); width: 0%; animation: load 2s forwards; }
 
-        .final-answer { background: rgba(255,255,255,0.02); padding: 20px; border-radius: 15px; border-right: 4px solid var(--neon); line-height: 1.8; position: relative; }
-        .sources-list { margin-top: 15px; padding-top: 10px; border-top: 1px solid #222; font-size: 11px; color: var(--google-blue); }
+        .dev-name {
+            color: var(--neon-blue);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-        .input-wrapper { padding: 25px 12%; background: #080808; display: flex; gap: 15px; border-top: 1px solid #111; }
-        input { flex: 1; background: #111; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 12px; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--google-blue); box-shadow: 0 0 15px rgba(66, 133, 244, 0.2); }
-        .btn-send { background: var(--google-blue); color: #fff; border: none; padding: 0 25px; border-radius: 12px; cursor: pointer; font-weight: bold; }
+        /* منطقة المحتوى الرئيسية */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: radial-gradient(circle at top right, #0a0a0a, #050505);
+        }
 
-        @keyframes load { to { width: 100%; } }
-        @keyframes slideIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+        header {
+            padding: 15px 40px;
+            background: rgba(0,0,0,0.8);
+            border-bottom: 1px solid #111;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-badge {
+            color: #00ff00;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        #chatContainer {
+            flex: 1;
+            padding: 20px 15%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            scroll-behavior: smooth;
+        }
+
+        /* نمط الرسائل */
+        .message {
+            max-width: 85%;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .user-msg {
+            align-self: flex-start;
+            background: #1a1a1a;
+            padding: 15px 20px;
+            border-radius: 20px 20px 20px 0;
+            border-right: 4px solid var(--neon-purple);
+        }
+
+        /* صندوق التفكير */
+        .thought-container {
+            background: rgba(66, 133, 244, 0.03);
+            border: 1px solid rgba(66, 133, 244, 0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .thought-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 10px;
+        }
+
+        .thought-steps {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.8;
+            font-style: italic;
+        }
+
+        .final-answer {
+            align-self: flex-end;
+            background: rgba(0, 243, 255, 0.03);
+            padding: 20px;
+            border-radius: 20px 20px 0 20px;
+            border-left: 4px solid var(--neon-blue);
+            line-height: 1.8;
+        }
+
+        .sources {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #222;
+            font-size: 11px;
+            color: var(--neon-blue);
+            opacity: 0.8;
+        }
+
+        /* شريط الإدخال */
+        .input-area {
+            padding: 25px 15%;
+            background: #080808;
+            border-top: 1px solid #111;
+            display: flex;
+            gap: 15px;
+        }
+
+        input {
+            flex: 1;
+            background: #111;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 15px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--google-blue);
+            box-shadow: 0 0 15px rgba(66, 133, 244, 0.1);
+        }
+
+        .send-btn {
+            background: var(--google-blue);
+            color: #fff;
+            border: none;
+            padding: 0 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .send-btn:hover { background: #357abd; transform: scale(1.05); }
+
+        /* حركات */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .dots::after { content: ''; animation: dots 1.5s infinite; }
+        @keyframes dots { 0% { content: ''; } 33% { content: '.'; } 66% { content: '..'; } 100% { content: '...'; } }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
-    <h2 style="color:var(--neon); text-align:center">DELTA AI</h2>
-    <div style="margin-top:20px; padding:10px; background:rgba(66,133,244,0.1); border-radius:8px; font-size:12px; color:var(--google-blue);">
-        <span class="material-icons" style="font-size:14px; vertical-align:middle">public</span> بروتوكول Google Search مفعل
+    <div class="logo-area">
+        <div class="logo-text">DELTA</div>
+        <div style="font-size: 10px; color: #444; margin-top: 5px;">SUPER INTELLIGENCE v1.0</div>
+    </div>
+
+    <div class="dev-card">
+        <div class="dev-name">
+            <span class="material-icons" style="font-size: 18px;">verified</span>
+            شريف داود
+        </div>
+        <div style="font-size: 11px; color: #666; margin-top: 5px;">
+            المؤسس والمطور الرئيسي<br>
+            طالب تقني | مبرمج أنظمة AI
+        </div>
+    </div>
+
+    <div style="margin-top: auto; font-size: 11px; color: #333; text-align: center;">
+        تم التطوير في الجزائر 2026
     </div>
 </div>
 
-<div class="main">
+<div class="main-content">
     <header>
-        <div style="font-weight:bold; letter-spacing:1px">مركز العمليات الشبكي</div>
-        <div class="status-online"><span class="material-icons" style="font-size:12px">cloud_done</span> متصل بخوادم Google</div>
+        <div style="font-weight: bold; font-size: 14px;">مركز العمليات الذكي</div>
+        <div class="status-badge">
+            <span class="material-icons" style="font-size: 14px;">language</span>
+            متصل بـ Google Search
+        </div>
     </header>
 
-    <div id="chatBox">
-        <div class="final-answer">نظام DELTA متصل الآن بمحركات البحث العالمية. اسألني عن أي خبر حديث، سعر عملة، أو معلومة تاريخية وسأقوم بالبحث عنها فوراً.</div>
+    <div id="chatContainer">
+        <div class="message final-answer">
+            مرحباً بك يا سيد **شريف داود**. أنا نظام DELTA، تم تفعيل بروتوكولات البحث والتحليل العميق. أنا جاهز لتنفيذ أوامرك البرمجية أو الإجابة على استفساراتك.
+        </div>
     </div>
 
-    <div class="input-wrapper">
-        <input type="text" id="userInput" placeholder="ابحث في Google عبر DELTA..." onkeypress="if(event.key==='Enter') startSearch()">
-        <button class="btn-send" onclick="startSearch()">بحث ذكي</button>
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="اسأل DELTA أو ابحث في Google..." onkeypress="if(event.key==='Enter') processInput()">
+        <button class="send-btn" onclick="processInput()">بحث ذكي</button>
     </div>
 </div>
 
 <script>
-    function startSearch() {
+    // قاعدة البيانات الشخصية المحدثة لشريف داود
+    const deltaCoreDB = {
+        "من انت": "أنا DELTA، نظام ذكاء اصطناعي فائق التطور، صُممت لأكون مساعداً شخصياً ومحللاً للبيانات. تم تطويري وبرمجتي بواسطة المبدع **شريف داود** في عام 2026.",
+        "من هو شريف داود": "شريف داود هو مطور برامج جزائري طموح يبلغ من العمر 16 عاماً. يدرس في السنة الأولى ثانوي (تخصص علوم وتكنولوجيا). هو المؤسس والمدير التقني لمشروع DELTA AI، وله اهتمامات واسعة في تداول العملات (Binance) وبرمجة الويب وألعاب PES.",
+        "من هو مطورك": "مطوري هو الأستاذ **شريف داود**. طالب متميز في المسار العلمي التقني، ومبرمج محترف قام ببناء خوارزمياتي وربطها بالشبكة العالمية.",
+        "متى تاسست": "تم إطلاق أول بروتوكول لي في مارس 2026، كجزء من رؤية المطور شريف داود لبناء ذكاء اصطناعي مستقل.",
+        "ما هي اهتمامات شريف": "يهتم مؤسسي شريف داود بمجالات تقنية متنوعة تشمل: بناء تطبيقات الويب، تداول الأصول الرقمية، تحليل البيانات، إدارة أنظمة Windows، ومتابعة تطورات الأنمي والألعاب.",
+        "دراسة شريف": "شريف داود طالب في الجزائر، يزاول دراسته في السنة الأولى من التعليم الثانوي، المسار العلمي والتكنولوجي بتميز."
+    };
+
+    function processInput() {
         const query = document.getElementById('userInput').value.trim();
         if(!query) return;
 
         // إضافة رسالة المستخدم
-        addMsg(query, 'user');
+        addMessage(query, 'user-msg', 'أنت');
         document.getElementById('userInput').value = '';
 
-        // إنشاء واجهة البحث (التفكير)
+        // إنشاء واجهة التفكير (Reasoning)
+        const chatBox = document.getElementById('chatContainer');
+        const thoughtId = 'thought_' + Date.now();
         const responseId = 'res_' + Date.now();
-        const deltaArea = document.createElement('div');
-        deltaArea.className = 'message-area';
-        deltaArea.innerHTML = `
+        
+        const deltaMsg = document.createElement('div');
+        deltaMsg.className = 'message';
+        deltaMsg.style.alignSelf = 'flex-end';
+        deltaMsg.style.width = '100%';
+
+        deltaMsg.innerHTML = `
             <div class="thought-container">
-                <div class="search-step"><span class="material-icons" style="font-size:16px; color:var(--google-blue)">search</span> جاري إرسال الاستعلام إلى محرك Google...</div>
-                <div class="search-step"><span class="material-icons" style="font-size:16px; color:#ea4335">language</span> فحص المصادر والمواقع الموثوقة...</div>
-                <div class="search-step"><span class="material-icons" style="font-size:16px; color:#fbbc05">description</span> تلخيص البيانات وتحليل النتائج...</div>
-                <div class="loader-line"></div>
+                <div class="thought-header">
+                    <span class="material-icons" style="font-size:16px; color:var(--google-blue)">psychology</span>
+                    <span>تحليل وتفكير في المصادر <span class="dots"></span></span>
+                </div>
+                <div id="${thoughtId}" class="thought-steps" style="display:none">
+                    • فحص سجلات الهوية الخاصة بالمطور شريف داود...<br>
+                    • استدعاء بيانات البحث من Google Search Index...<br>
+                    • تحليل النتائج وصياغة الرد وفق بروتوكول DELTA-2026...
+                </div>
             </div>
             <div class="final-answer" id="${responseId}" style="display:none"></div>
         `;
-        document.getElementById('chatBox').appendChild(deltaArea);
+
+        chatBox.appendChild(deltaMsg);
         scroll();
 
-        // محاكاة استرجاع النتائج من جوجل
+        // محاكاة التفكير والرد
         setTimeout(() => {
-            const result = generateWebResult(query);
-            const answerDiv = document.getElementById(responseId);
-            answerDiv.innerHTML = result.text;
-            answerDiv.innerHTML += `
-                <div class="sources-list">
-                    <b>🔗 المصادر المستخرجة من البحث:</b><br>
-                    1. Google Search Index (2026)<br>
-                    2. ${result.sourceSite}<br>
-                    3. أرشيف المعلومات العالمي
-                </div>
-            `;
-            answerDiv.style.display = 'block';
+            document.getElementById(thoughtId).style.display = 'block';
             scroll();
-        }, 3500);
+
+            setTimeout(() => {
+                const responseData = getResponse(query);
+                const finalBox = document.getElementById(responseId);
+                finalBox.innerHTML = responseData.text;
+                
+                if(responseData.isExternal) {
+                    finalBox.innerHTML += `
+                        <div class="sources">
+                            📍 المصادر المستند إليها: قاعدة بيانات شريف داود | أرشيف Google البحثي 2026 | تقارير DELTA التقنية
+                        </div>
+                    `;
+                }
+                
+                finalBox.style.display = 'block';
+                scroll();
+            }, 3000);
+        }, 1000);
     }
 
-    function generateWebResult(q) {
-        // محاكاة ذكية للنتائج بناءً على الكلمات
-        if(q.includes("سعر") || q.includes("تداول")) {
-            return { text: `بناءً على تحديثات Google المالية للحظة الحالية، تظهر الأرقام أن السوق في حالة تذبذب إيجابي. الأسعار المسجلة في المنصات العالمية تشير إلى ثبات في مستويات الدعم الرئيسية.`, sourceSite: "Binance & Bloomberg Live" };
+    function getResponse(q) {
+        // البحث في الأسئلة الجاهزة أولاً
+        for (let key in deltaCoreDB) {
+            if(q.includes(key)) return { text: deltaCoreDB[key], isExternal: false };
         }
-        if(q.includes("من انت") || q.includes("مؤسس")) {
-            return { text: `أنا DELTA، نظام ذكاء اصطناعي مستقل متصل بشبكة الإنترنت. تم تطويري بواسطة (أنت) في عام 2026 لأكون جسراً بين المستخدم والبيانات العالمية.`, sourceSite: "DELTA Official Database" };
-        }
-        return { text: `بعد فحص نتائج البحث في Google حول "${q}"، وجدت أن هذا الموضوع يحظى باهتمام كبير حالياً. تشير التقارير إلى أن التطورات الأخيرة في هذا المجال تركز على الكفاءة والابتكار الرقمي.`, sourceSite: "Wikipedia & News Portals" };
+        
+        // رد تلقائي للأسئلة الخارجية
+        return { 
+            text: `بناءً على نتائج البحث في Google وتحليلي للمصادر المتاحة حول "${q}"، تبين لي أن هذا الموضوع يحتاج إلى دقة عالية. وفقاً للمعايير التي وضعها مطوري **شريف داود**، فإن الإجابة تعتمد على السياق التقني الحالي لعام 2026. هل ترغب في أن أقوم ببحث أعمق؟`, 
+            isExternal: true 
+        };
     }
 
-    function addMsg(text, type) {
+    function addMessage(text, className, sender) {
         const div = document.createElement('div');
-        div.style.alignSelf = type === 'user' ? 'flex-start' : 'flex-end';
-        div.className = 'final-answer';
-        div.style.background = type === 'user' ? '#1a1a1a' : 'rgba(0, 243, 255, 0.03)';
-        div.style.borderRight = type === 'user' ? '3px solid #bc13fe' : '3px solid var(--neon)';
-        div.innerText = text;
-        document.getElementById('chatBox').appendChild(div);
+        div.className = `message ${className}`;
+        div.innerHTML = `<b>${sender}:</b><br>${text}`;
+        document.getElementById('chatContainer').appendChild(div);
         scroll();
     }
 
     function scroll() {
-        const box = document.getElementById('chatBox');
+        const box = document.getElementById('chatContainer');
         box.scrollTop = box.scrollHeight;
     }
 </script>

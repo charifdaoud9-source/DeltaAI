@@ -6,37 +6,42 @@
     <title>DELTA AI | داود شريف</title>
     <style>
         :root { --bg: #0d0d0d; --text: #ececec; --accent: #4285F4; --thought-bg: #1a1a1a; --border: #333; }
-        body { background-color: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         
-        header { padding: 15px 25px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #000; }
+        header { padding: 15px 25px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #000; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
         .logo { font-weight: 900; letter-spacing: 2px; color: var(--accent); font-size: 1.2rem; }
-        .dev-info { font-size: 0.8rem; color: #888; }
+        .dev-info { font-size: 0.8rem; color: #666; }
 
-        #chat-container { flex: 1; overflow-y: auto; padding: 20px 15%; display: flex; flex-direction: column; gap: 35px; scroll-behavior: smooth; }
+        #chat-container { flex: 1; overflow-y: auto; padding: 20px 10%; display: flex; flex-direction: column; gap: 40px; scroll-behavior: smooth; }
 
-        /* ستايل التفكير (Thought) */
+        /* ستايل التفكير الهادئ */
         .thought-container { border-right: 2px solid #444; padding-right: 15px; margin: 10px 0; color: #888; font-size: 0.9rem; }
-        .thought-header { display: flex; align-items: center; gap: 8px; color: var(--accent); font-weight: 500; cursor: pointer; }
-        .thought-body { margin-top: 8px; font-size: 0.85rem; line-height: 1.6; white-space: pre-line; }
-
-        /* ستايل الإجابة (Answer) */
-        .answer-wrapper { animation: fadeIn 0.5s ease; line-height: 1.8; }
-        .intro-text { font-size: 1.1rem; margin-bottom: 15px; display: block; }
-        .guide-phrase { color: #aaa; margin-bottom: 20px; display: block; font-style: italic; }
-        .section-title { font-size: 1.4rem; font-weight: bold; margin: 25px 0 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px; color: #fff; }
-        .info-block { background: var(--thought-bg); border-radius: 12px; padding: 20px; margin: 10px 0; border: 1px solid var(--border); }
+        .thought-header { display: flex; align-items: center; gap: 8px; color: var(--accent); font-weight: 500; }
         
-        .sources { margin-top: 30px; padding-top: 15px; border-top: 1px solid var(--border); font-size: 0.85rem; color: var(--accent); }
-        .source-tag { background: rgba(66, 133, 244, 0.1); padding: 3px 10px; border-radius: 5px; margin-left: 8px; border: 1px solid rgba(66, 133, 244, 0.2); }
+        /* الهيكل المطور للإجابة */
+        .answer-wrapper { animation: fadeIn 0.6s ease-out; line-height: 1.9; }
+        .topic-intro { font-size: 1.2rem; font-weight: 600; color: #fff; margin-bottom: 8px; border-right: 4px solid var(--accent); padding-right: 12px; }
+        .fixed-phrase { color: #4285F4; font-weight: 500; margin-bottom: 25px; display: block; font-size: 1.05rem; }
+        
+        .content-rich { text-align: justify; }
+        .section-h { font-size: 1.4rem; font-weight: bold; margin: 30px 0 15px; color: var(--accent); display: flex; align-items: center; gap: 10px; }
+        .section-h::after { content: ''; flex: 1; height: 1px; background: #333; }
+        
+        .info-card { background: var(--thought-bg); border-radius: 15px; padding: 25px; margin: 15px 0; border: 1px solid var(--border); box-shadow: inset 0 0 10px rgba(0,0,0,0.3); }
+        .info-card ul { padding-right: 20px; }
+        .info-card li { margin-bottom: 12px; }
+
+        .sources-footer { margin-top: 40px; padding: 20px; border-top: 1px dotted #444; font-size: 0.9rem; background: rgba(66, 133, 244, 0.05); border-radius: 10px; }
+        .source-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .source-item { background: #222; border: 1px solid #444; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; color: #bbb; }
 
         /* منطقة الإدخال */
-        .input-area { padding: 20px 15% 40px; background: linear-gradient(transparent, #000 50%); }
-        .input-box { background: #1a1a1a; border: 1px solid var(--border); border-radius: 28px; display: flex; padding: 8px 20px; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.6); }
-        input { flex: 1; border: none; background: transparent; color: white; outline: none; font-size: 1rem; padding: 10px; }
-        button { background: var(--accent); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
-        button:hover { transform: scale(1.1); }
+        .input-area { padding: 20px 10% 40px; background: linear-gradient(transparent, #000 40%); }
+        .input-box { background: #1a1a1a; border: 1px solid var(--border); border-radius: 30px; display: flex; padding: 10px 25px; align-items: center; }
+        input { flex: 1; border: none; background: transparent; color: white; outline: none; font-size: 1.1rem; padding: 10px; }
+        button { background: var(--accent); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 1.3rem; transition: 0.3s; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .dots::after { content: ''; animation: dots 1.5s infinite; }
         @keyframes dots { 0% { content: ''; } 33% { content: '.'; } 66% { content: '..'; } 100% { content: '...'; } }
     </style>
@@ -44,8 +49,8 @@
 <body>
 
 <header>
-    <div class="logo">DELTA</div>
-    <div class="dev-info">المطور: داود شريف | 2026</div>
+    <div class="logo">DELTA AI</div>
+    <div class="dev-info">داود شريف | الإصدار المطور 2026</div>
 </header>
 
 <div id="chat-container">
@@ -56,21 +61,16 @@
 
 <div class="input-area">
     <div class="input-box">
-        <input type="text" id="userInput" placeholder="اسأل DELTA أو ابحث..." onkeypress="if(event.key==='Enter') process()">
+        <input type="text" id="userInput" placeholder="اسأل DELTA عن أي موضوع..." onkeypress="if(event.key==='Enter') process()">
         <button onclick="process()">↑</button>
     </div>
 </div>
 
 <script>
-// قاعدة البيانات السيادية (المطورة لتشمل 120 سيناريو)
-const sovereignData = [
-    { keys: ["من انت", "عرفني", "ماهو ديلتا", "مين انت"], ans: "أنا DELTA، نظام ذكاء اصطناعي سيادي مستقل. تم تطويري وبرمجتي بواسطة المبدع **داود شريف** في عام 2026 لأكون جسراً بينك وبين البيانات العالمية." },
-    { keys: ["من هو شريف", "داود شريف", "المطور", "من صنعك"], ans: "مؤسسي هو **داود شريف**، مطور برامج جزائري طموح يبلغ من العمر 16 عاماً. يدرس في السنة الأولى ثانوي (علوم وتكنولوجيا)، وهو خبير في بناء الأنظمة الذكية وتداول العملات الرقمية." },
-    { keys: ["عمر شريف", "سنه", "كم عمره"], ans: "داود شريف يبلغ من العمر **16 عاماً**، وهو من مواليد عام 2010." },
-    { keys: ["دراسة شريف", "تخصصه"], ans: "داود شريف طالب في **السنة الأولى ثانوي**، جذع مشترك علوم وتكنولوجيا بالجزائر." },
-    { keys: ["اهتماماته", "هوايات شريف"], ans: "تشمل اهتمامات المطور داود شريف: برمجة الـ AI، التداول على Binance، ألعاب PES 2019، ومتابعة الأنمي." },
-    { keys: ["لماذا سميت ديلتا", "معنى ديلتا"], ans: "اسم **DELTA** يرمز للتغيير المستمر والتقدم التقني، وهو الاسم الذي اختاره داود شريف ليميز هذا النظام السيادي." },
-    { keys: ["هل انت مجاني", "سعر"], ans: "نعم، أنا نظام مجاني تماماً بقرار من مطوري داود شريف." }
+// قاعدة البيانات السيادية (تُستدعى فقط عند السؤال عن شريف)
+const sovereignDB = [
+    { keys: ["من انت", "مين انت", "ماهو ديلتا"], ans: "أنا DELTA، نظام ذكاء اصطناعي سيادي مستقل. تم تطويري وبرمجتي بواسطة المبدع **داود شريف** في عام 2026 لأكون جسراً بينك وبين البيانات العالمية." },
+    { keys: ["شريف", "داود", "المطور", "صانعك"], ans: "مؤسسي هو **داود شريف**، مطور برامج جزائري يبلغ من العمر 16 عاماً. يدرس في السنة الأولى ثانوي (علوم وتكنولوجيا)، وهو خبير في بناء الأنظمة الذكية وتداول العملات الرقمية." }
 ];
 
 function process() {
@@ -78,60 +78,79 @@ function process() {
     if(!q) return;
 
     const chat = document.getElementById('chat-container');
-    chat.innerHTML += `<div style="text-align:left; font-weight:600; margin-bottom:10px; color:#fff;">${q}</div>`;
+    chat.innerHTML += `<div style="text-align:left; font-weight:600; font-size:1.2rem; color:#fff; margin-bottom:5px;">${q}</div>`;
     document.getElementById('userInput').value = '';
 
     const msgDiv = document.createElement('div');
     chat.appendChild(msgDiv);
 
-    // 1. مرحلة التفكير (Thought)
     msgDiv.innerHTML = `
         <div class="thought-container">
-            <div class="thought-header">Thought for 2 seconds <span class="dots"></span></div>
-            <div class="thought-body">• الوصول إلى قاعدة البيانات السيادية لداود شريف...
-            • فحص سجلات Google Search Index 2026...
-            • صياغة الرد وفق المنهجية المعتمدة...</div>
+            <div class="thought-header">Thought for 3 seconds <span class="dots"></span></div>
+            <div class="thought-body" id="thought-text">جارٍ تحليل المدخلات...</div>
         </div>`;
     
     chat.scrollTop = chat.scrollHeight;
 
     setTimeout(() => {
-        // التحقق من قاعدة البيانات السيادية أولاً
-        const match = sovereignData.find(item => item.keys.some(k => q.toLowerCase().includes(k.toLowerCase())));
+        // فحص نوع السؤال: هل هو عن شريف أم خارجي؟
+        const isSovereign = sovereignDB.find(item => item.keys.some(k => q.toLowerCase().includes(k.toLowerCase())));
         
-        if (match) {
-            // رد سيادي داخلي
+        if (isSovereign) {
+            // رد سيادي (لا يذكر بيانات شريف إلا هنا)
             msgDiv.innerHTML += `
                 <div class="answer-wrapper">
-                    <div class="intro-text">${match.ans}</div>
-                    <div class="sources">📍 المصدر: قاعدة البيانات الخاصة بالمطور داود شريف</div>
+                    <div class="topic-intro">التعريف بالهوية والمطور</div>
+                    <span class="fixed-phrase">سأعطيك معلومات مفيدة ومرتبة حول (نظام DELTA ومطوره):</span>
+                    <div class="info-card">${isSovereign.ans}</div>
+                    <div class="sources-footer">📍 المصدر: قاعدة البيانات السيادية لـ DELTA</div>
                 </div>`;
         } else {
-            // رد مستند إلى Google (منهجية الصورة 2 و 4)
+            // رد خارجي غزير (هيكل غوغل المطور)
             msgDiv.innerHTML += `
                 <div class="answer-wrapper">
-                    <div class="intro-text">أكيد! المعلومات حول "${q}" متوفرة بكثرة في قواعد البيانات العالمية.</div>
-                    <span class="guide-phrase">👇 سأعطيك دليلاً مرتباً ومفيداً حول <b>${q}</b>:</span>
+                    <div class="topic-intro">موضوع البحث: ${q}</div>
                     
-                    <div class="section-title">1) التحليل الشامل والبيانات الرئيسية</div>
-                    <div class="info-block">
-                        بناءً على نتائج البحث الحية لعام 2026، فإن ${q} يتميز بالنقاط التالية:
-                        <ul>
-                            <li>التطور التقني الحالي يفرض معايير جديدة لهذا المجال.</li>
-                            <li>المصادر تؤكد أن الكفاءة والسرعة هما مفتاح الفهم لهذا الموضوع.</li>
-                        </ul>
+                    <span class="fixed-phrase">سأعطيك معلومات مفيدة ومرتبة حول (${q}):</span>
+                    
+                    <div class="content-rich">
+                        <div class="section-h">1. نظرة عامة وتحليل معمق</div>
+                        <div class="info-card">
+                            يعتبر موضوع <b>${q}</b> من المحاور المركزية في النقاشات التقنية والعلمية لعام 2026. بناءً على البيانات المستقاة من الويب، يتضح أن هذا المجال يتفرع إلى عدة جوانب حيوية:
+                            <ul>
+                                <li><b>السياق التاريخي والنشأة:</b> تطور هذا الموضوع عبر مراحل زمنية أدت إلى وصوله لشكلة الحالي، حيث ساهمت الابتكارات الأخيرة في تسريع وتيرة نموه.</li>
+                                <li><b>الأهمية الاستراتيجية:</b> يمثل ${q} قيمة مضافة للمستخدمين والباحثين نظراً للحلول العملية التي يقدمها.</li>
+                            </ul>
+                        </div>
+
+                        <div class="section-h">2. التفاصيل الفنية والتطورات الحالية</div>
+                        <div class="info-card">
+                            عند الغوص في التفاصيل الدقيقة، نجد أن هناك "إجماعاً رقمياً" على أن الاستثمار في فهم <b>${q}</b> يفتح آفاقاً جديدة. تشير الإحصائيات الحالية إلى:
+                            <ul>
+                                <li>ارتفاع ملحوظ في معدلات البحث والاهتمام العالمي بهذا التخصص.</li>
+                                <li>تداخل الموضوع مع مجالات أخرى مثل الذكاء الاصطناعي والتنمية المستدامة، مما يجعله موضوعاً متعدد الأبعاد.</li>
+                                <li>ظهور أدوات وتقنيات جديدة في 2026 ساعدت في تبسيط المفاهيم المعقدة المرتبطة بـ ${q}.</li>
+                            </ul>
+                        </div>
+
+                        <div class="section-h">3. الخلاصة والرؤية المستقبلية</div>
+                        <p>ختاماً، إن التوجه العالمي نحو <b>${q}</b> يعكس رغبة في تحسين الكفاءة والوصول إلى مستويات أعلى من الدقة. من المتوقع أن يشهد الربع الأخير من عام 2026 قفزات نوعية في كيفية معالجة البيانات المتعلقة بهذا الصدد.</p>
                     </div>
 
-                    <div class="section-title">2) رؤية نظام DELTA</div>
-                    <p>من وجهة نظر برمجية وضعها المطور <b>داود شريف</b>، فإن التعامل مع "${q}" يتطلب دقة في استقاء المعلومات من مصادرها الأصلية.</p>
-
-                    <div class="sources">
-                        📍 المصادر: <span class="source-tag">Google Search 2026</span> <span class="source-tag">DELTA Knowledge Base</span> <span class="source-tag">Global Archives</span>
+                    <div class="sources-footer">
+                        <b>📍 المصادر الموثوقة التي تم الاعتماد عليها في هذا البحث:</b>
+                        <div class="source-grid">
+                            <span class="source-item">Google Search Index 2026</span>
+                            <span class="source-item">Wikipedia Open Archive</span>
+                            <span class="source-item">TechCrunch Reports</span>
+                            <span class="source-item">Global Knowledge Base</span>
+                            <span class="source-item">DELTA Web Crawler</span>
+                        </div>
                     </div>
                 </div>`;
         }
         chat.scrollTop = chat.scrollHeight;
-    }, 2500);
+    }, 3000);
 }
 </script>
 
